@@ -1,8 +1,11 @@
 ## Name of the node
--sname {{ rel_name }}
+#-sname {{ rel_name }}
 
 ## Cookie for distributed erlang
--setcookie {{ rel_name }}
+#-setcookie {{ rel_name }}
+
+## Disable starting of EPMD
+-start_epmd false
 
 ## Heartbeat management; auto-restarts VM if it dies or becomes unresponsive
 ## (Disabled by default..use with caution!)
