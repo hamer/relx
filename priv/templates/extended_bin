@@ -1,4 +1,4 @@
-#!/bin/ash
+#!/bin/sh
 
 set -e
 
@@ -288,7 +288,7 @@ NAME="$(echo "$NAME_ARG" | awk '{print $2}')"
 # So here we check for @ and add @hostname if missing
 case "${NAME}" in
     *@*) ;;                             # Nothing to do
-    *)   NAME=${NAME}@$(hostname);;  # Add @hostname
+    *)   NAME=${NAME}@$(relx_get_nodename);;  # Add @hostname
 esac
 
 # Export the variable so that it's available in the 'eval' calls
