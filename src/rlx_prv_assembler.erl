@@ -370,7 +370,6 @@ write_bin_file(State, Release, OutputDir, RelDir) ->
     RelVsn = rlx_release:vsn(Release),
     BinDir = filename:join([OutputDir, "bin"]),
     ok = ec_file:mkdir_p(BinDir),
-    VsnRel = filename:join(BinDir, rlx_release:canonical_name(Release)),
     BareRel = filename:join(BinDir, RelName),
     ErlOpts = rlx_state:get(State, erl_opts, ""),
     {OsFamily, _OsName} = os:type(),
@@ -404,12 +403,6 @@ write_bin_file(State, Release, OutputDir, RelDir) ->
         false ->
             ok;
         _ ->
-            VsnRelStartFile = case OsFamily of
-                unix -> VsnRel;
-                win32 -> string:concat(VsnRel, ".cmd")
-            end,
-            ok = file:write_file(VsnRelStartFile, StartFile),
-            ok = file:change_mode(VsnRelStartFile, 8#777),
             BareRelStartFile = case OsFamily of
                 unix -> BareRel;
                 win32 -> string:concat(BareRel, ".cmd")
