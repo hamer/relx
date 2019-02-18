@@ -1,4 +1,9 @@
-[![Build Status](https://travis-ci.org/erlware/relx.png?branch=master)](https://travis-ci.org/erlware/relx)
+
+CAUTION
+=======
+
+This fork is slightly modified to build a desktop app. Some functionality was removed.
+
 
 Relx
 =======
