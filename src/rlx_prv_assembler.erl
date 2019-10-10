@@ -611,16 +611,38 @@ include_erts(State, Release, OutputDir, RelDir) ->
                 true ->
                     ok = ec_file:mkdir_p(LocalErts),
                     ok = ec_file:copy(ErtsDir, LocalErts, [recursive]),
+                    lists:foreach(fun(DirName) ->
+                                          ec_file:remove(filename:join([LocalErts, DirName]), [recursive])
+                                  end, ["doc", "include", "info", "lib"]),
+                    ok = ec_file:mkdir_p(filename:join([LocalErts, "lib"])),
+                    BinPath = filename:join([LocalErts, "bin"]),
+                    {ok, BinList} = file:list_dir(BinPath),
                     case OsFamily of
                         unix ->
-                            Erl = filename:join([LocalErts, "bin", "erl"]),
-                            ok = ec_file:remove(Erl),
-                            ok = file:write_file(Erl, erl_script(ErtsVersion)),
-                            ok = file:change_mode(Erl, 8#755);
+                            lists:foreach(fun("erl") ->
+                                                  Erl = filename:join([BinPath, "erl"]),
+                                                  ok = ec_file:remove(Erl),
+                                                  ok = file:write_file(Erl, erl_script(ErtsVersion)),
+                                                  ok = file:change_mode(Erl, 8#755);
+                                              (BinName) ->
+                                                  ok = file:change_mode(filename:join([BinPath, BinName]), 8#755)
+                                          end, BinList),
+                            ok;
                         win32 ->
-                            ErlIni = filename:join([LocalErts, "bin", "erl.ini"]),
+                            ErlIni = filename:join([BinPath, "erl.ini"]),
                             ok = ec_file:remove(ErlIni),
-                            ok = file:write_file(ErlIni, erl_ini(OutputDir, ErtsVersion))
+                            lists:foreach(fun(Name) ->
+                                                  case re:run(Name, "debug\.dll$") of
+                                                      nomatch -> ok;
+                                                      _ ->
+                                                          ok = file:delete(filename:join([BinPath, Name]))
+                                                  end,
+                                                  case re:run(Name, "\.pdb$") of
+                                                      nomatch -> ok;
+                                                      _ ->
+                                                          ok = file:delete(filename:join([BinPath, Name]))
+                                                  end
+                                          end, BinList)
                     end,
 
                     %% delete erts src if the user requested it not be included
@@ -790,11 +812,6 @@ extended_bin_file_contents(OsFamily, RelName, RelVsn, ErtsVsn, ErlOpts, Hooks) -
                       {post_stop_hooks, PostStopHooks},
                       {pre_install_upgrade_hooks, PreInstallUpgradeHooks},
                       {post_install_upgrade_hooks, PostInstallUpgradeHooks}]).
-
-erl_ini(OutputDir, ErtsVsn) ->
-    ErtsDirName = string:concat("erts-", ErtsVsn),
-    BinDir = filename:join([OutputDir, ErtsDirName, bin]),
-    render(erl_ini, [{bin_dir, BinDir}, {output_dir, OutputDir}]).
 
 install_upgrade_escript_contents() ->
     render(install_upgrade_escript).

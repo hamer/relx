@@ -22,4 +22,4 @@ ERTS_LIB_DIR="$ERTS_DIR/../lib"
 
 cd "$RELEASE_ROOT_DIR"
 
-"$BINDIR/erlexec" -config "$REL_DIR/sys.config" -boot "$REL_DIR/$REL_NAME" -boot_var ERTS_LIB_DIR "$ERTS_LIB_DIR" -args_file "$REL_DIR/vm.args" "$@"
+"$BINDIR/erlexec" -config "$REL_DIR/sys.config" -mode embedded -boot "$REL_DIR/$REL_NAME" -boot_var ERTS_LIB_DIR "$ERTS_LIB_DIR" -args_file "$REL_DIR/vm.args" "$@"

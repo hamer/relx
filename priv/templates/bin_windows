@@ -18,4 +18,4 @@ set ROOTDIR=%ERTS_DIR%
 set ERTS_LIB_DIR="%ERTS_DIR%\..\lib"
 
 cd %RELEASE_ROOT_DIR%
-"%BINDIR%\erl.exe" -config "%REL_DIR%\sys.config" -boot "%REL_DIR%\%REL_NAME%" -boot_var RELEASE_DIR "%RELEASE_ROOT_DIR%" -args_file "%REL_DIR%/vm.args" %*
+"%BINDIR%\erl.exe" -config "%REL_DIR%\sys.config" -mode embedded -boot "%REL_DIR%\%REL_NAME%" -boot_var RELEASE_DIR "%RELEASE_ROOT_DIR%" -args_file "%REL_DIR%/vm.args" %*
