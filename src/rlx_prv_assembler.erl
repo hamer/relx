@@ -613,7 +613,7 @@ include_erts(State, Release, OutputDir, RelDir) ->
                     ok = ec_file:copy(ErtsDir, LocalErts, [recursive]),
                     lists:foreach(fun(DirName) ->
                                           ec_file:remove(filename:join([LocalErts, DirName]), [recursive])
-                                  end, ["doc", "include", "info", "lib"]),
+                                  end, ["doc", "include", "info", "lib", "man"]),
                     ok = ec_file:mkdir_p(filename:join([LocalErts, "lib"])),
                     BinPath = filename:join([LocalErts, "bin"]),
                     {ok, BinList} = file:list_dir(BinPath),
@@ -632,12 +632,12 @@ include_erts(State, Release, OutputDir, RelDir) ->
                             ErlIni = filename:join([BinPath, "erl.ini"]),
                             ok = ec_file:remove(ErlIni),
                             lists:foreach(fun(Name) ->
-                                                  case re:run(Name, "debug\.dll$") of
+                                                  case re:run(Name, "\\.debug\\.") of
                                                       nomatch -> ok;
                                                       _ ->
                                                           ok = file:delete(filename:join([BinPath, Name]))
                                                   end,
-                                                  case re:run(Name, "\.pdb$") of
+                                                  case re:run(Name, "\\.pdb$") of
                                                       nomatch -> ok;
                                                       _ ->
                                                           ok = file:delete(filename:join([BinPath, Name]))
